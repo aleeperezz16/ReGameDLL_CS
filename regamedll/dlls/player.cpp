@@ -7146,6 +7146,19 @@ void EXT_FUNC CBasePlayer::__API_HOOK(UpdateClientData)()
 			MESSAGE_END();
 		}
 
+#ifdef REGAMEDLL_ADD
+		if (CSPlayer()->GetProtectionState() == CCSPlayer::ProtectionSt_Active)
+		{
+			MESSAGE_BEGIN(MSG_ONE, gmsgStatusIcon, nullptr, pev);
+				WRITE_BYTE(STATUSICON_FLASH);
+				WRITE_STRING("suithelmet_full");
+				WRITE_BYTE(0);
+				WRITE_BYTE(160);
+				WRITE_BYTE(0);
+			MESSAGE_END();
+		}
+#endif
+
 #ifdef REGAMEDLL_FIXES
 		// send "flashlight" update message
 		if (FlashlightIsOn())
@@ -10208,14 +10221,6 @@ void EXT_FUNC CBasePlayer::__API_HOOK(SetSpawnProtection)(float flProtectionTime
 	{
 		pev->rendermode = kRenderTransAdd;
 		pev->renderamt  = 100.0f;
-
-		MESSAGE_BEGIN(MSG_ONE_UNRELIABLE, gmsgStatusIcon, nullptr, pev);
-			WRITE_BYTE(STATUSICON_FLASH);
-			WRITE_STRING("suithelmet_full");
-			WRITE_BYTE(0);
-			WRITE_BYTE(160);
-			WRITE_BYTE(0);
-		MESSAGE_END();
 	}
 
 	CSPlayer()->m_flSpawnProtectionEndTime = gpGlobals->time + flProtectionTime;
