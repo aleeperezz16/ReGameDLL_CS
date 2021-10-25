@@ -4670,16 +4670,6 @@ void EXT_FUNC CBasePlayer::__API_HOOK(PreThink)()
 	}
 
 	UpdateLocation();
-
-#ifdef REGAMEDLL_ADD
-	auto protectStateCurrent = CSPlayer()->GetProtectionState();
-	if (protectStateCurrent  == CCSPlayer::ProtectionSt_Expired ||
-		(protectStateCurrent == CCSPlayer::ProtectionSt_Active &&
-		((respawn_immunity_force_unset.value == 1 && (m_afButtonPressed & IN_ACTIVE)) || (respawn_immunity_force_unset.value == 2 && (m_afButtonPressed & (IN_ATTACK | IN_ATTACK2))))))
-	{
-		RemoveSpawnProtection();
-	}
-#endif
 }
 
 // If player is taking time based damage, continue doing damage to player -
@@ -5159,6 +5149,16 @@ pt_end:
 	if (m_flNextAttack < -0.001)
 		m_flNextAttack = -0.001;
 #endif // CLIENT_WEAPONS
+
+#ifdef REGAMEDLL_ADD
+	auto protectStateCurrent = CSPlayer()->GetProtectionState();
+	if (protectStateCurrent == CCSPlayer::ProtectionSt_Expired ||
+		(protectStateCurrent == CCSPlayer::ProtectionSt_Active &&
+			((respawn_immunity_force_unset.value == 1 && (pev->button & IN_ACTIVE)) || (respawn_immunity_force_unset.value == 2 && (pev->button & (IN_ATTACK | IN_ATTACK2))))))
+	{
+		RemoveSpawnProtection();
+	}
+#endif
 
 	// Track button info so we can detect 'pressed' and 'released' buttons next frame
 	m_afButtonLast = pev->button;
