@@ -1859,7 +1859,11 @@ BOOL EXT_FUNC __API_HOOK(HandleMenu_ChooseTeam)(CBasePlayer *pPlayer, int slot)
 				ClientKill(pPlayer->edict());
 
 				// add 1 to frags to balance out the 1 subtracted for killing yourself
+#ifdef REGAMEDLL_FIXES
+				pPlayer->AddPoints(1, TRUE);
+#else
 				pPlayer->pev->frags++;
+#endif
 			}
 
 			pPlayer->RemoveAllItems(TRUE);
@@ -1895,15 +1899,13 @@ BOOL EXT_FUNC __API_HOOK(HandleMenu_ChooseTeam)(CBasePlayer *pPlayer, int slot)
 
 #ifndef REGAMEDLL_FIXES
 			MESSAGE_BEGIN(MSG_BROADCAST, gmsgScoreInfo);
-#else
-			MESSAGE_BEGIN(MSG_ALL, gmsgScoreInfo);
-#endif
 				WRITE_BYTE(ENTINDEX(pPlayer->edict()));
 				WRITE_SHORT(int(pPlayer->pev->frags));
 				WRITE_SHORT(pPlayer->m_iDeaths);
 				WRITE_SHORT(0);
 				WRITE_SHORT(0);
 			MESSAGE_END();
+#endif
 
 			pPlayer->m_pIntroCamera = nullptr;
 			pPlayer->m_bTeamChanged = true;
